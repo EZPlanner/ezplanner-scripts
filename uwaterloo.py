@@ -22,10 +22,8 @@ class UWaterloo:
         for course_data in resp.json()['data']:
             courses.append({
                 'subject': course_data['subject'],
-                'catalog_number': course_data['catalog_number']
+                'catalog_number': course_data['catalog_number'],
+                'data': course_data
             })
 
-        print(courses)
-
-uwaterloo = UWaterloo("55c795b34312e672729052f996ccda64")
-uwaterloo.get_courses()
+        return courses
