@@ -1,5 +1,6 @@
 import requests
 import os
+from math import *
 
 API_BASE_URL = "https://api.uwaterloo.ca/v2"
 
@@ -36,15 +37,20 @@ class UWaterloo:
     def get_prereqs(self, args):
         course = args['course']
         payload = {
-            'key': args['api_key']
+            'key': ('api_key' in args and args['api_key']) or self.api_key
         }
 
         resp = requests.get(API_BASE_URL + "/courses/{}/{}/prerequisites.json".format(course['subject'], course['catalog_number']), params=payload)
 
         self.current_count += 1
 
-        # os.system('cls' if os.name == 'nt' else 'clear')
-        # print('{0:.2f}%'.format((float(self.current_count) / self.course_count) * 100.0))
+        if self.current_count % 20 == 0:
+            progress = (float(self.current_count) / self.course_count) * 100.0
+
+            os.system('cls' if os.name == 'nt' else 'clear')
+            print('{0:.2f}%'.format(progress))
+            load = ceil(progress)
+            print('|' + '*' * load + ' ' * (100 - load) + '|')
 
         # print('processing {} {}'.format(course['subject'], course['catalog_number']))
 

@@ -4,39 +4,32 @@ from uwaterloo import *
 from random import randint
 from multiprocessing.dummy import Pool as ThreadPool
 
-uw = UWaterloo(os.environ['UW_API_KEY'])
+THREAD_COUNT = 10
+DYNAMODB_ENDPOINT = 'http://localhost:8000'
 
-db = boto3.resource('dynamodb', endpoint_url='http://localhost:8000')
-
-try:
-    table = db.create_table(
-        TableName='pre_req',
-        KeySchema=[
-            {
-                'AttributeName': 'course_key',
-                'KeyType': 'HASH'
+def create_or_get_pre_req_table():
+    try:
+        return db_client.create_table(
+            TableName='pre_req',
+            KeySchema=[
+                {
+                    'AttributeName': 'course_key',
+                    'KeyType': 'HASH'
+                }
+            ],
+            AttributeDefinitions=[
+                {
+                    'AttributeName': 'course_key',
+                    'AttributeType': 'S'
+                }
+            ],
+            ProvisionedThroughput={
+                'ReadCapacityUnits': 10,
+                'WriteCapacityUnits': 10
             }
-        ],
-        AttributeDefinitions=[
-            {
-                'AttributeName': 'course_key',
-                'AttributeType': 'S'
-            }
-        ],
-        ProvisionedThroughput={
-            'ReadCapacityUnits': 10,
-            'WriteCapacityUnits': 10
-        }
-    )
-except:
-    # do something here as you require
-    pass
-
-pool = ThreadPool(50)
-
-courses = uw.get_courses()
-
-args = []
+        )
+    except db_client.exceptions.ResourceInUseException:
+        return db_res.Table('pre_req')
 
 def gen_api_key():
     a = 0
@@ -46,9 +39,22 @@ def gen_api_key():
         yield os.environ['UW_API_KEY{}'.format(a)]
         a += 1
 
+uw = UWaterloo(os.environ['UW_API_KEY0'])
+
+db_client = boto3.client('dynamodb', endpoint_url=DYNAMODB_ENDPOINT)
+db_res = boto3.resource('dynamodb', endpoint_url=DYNAMODB_ENDPOINT)
+
+table = create_or_get_pre_req_table()
+
+pool = ThreadPool(THREAD_COUNT)
+
+courses = uw.get_courses()
+
+args = []
+
 api_key = gen_api_key()
 
-for course in courses[0:100]:
+for course in courses:
     args.append({
         'api_key': next(api_key),
         'course': course
