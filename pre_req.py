@@ -4,7 +4,7 @@ from uwaterloo import *
 from random import randint
 from multiprocessing.dummy import Pool as ThreadPool
 
-THREAD_COUNT = 10
+THREAD_COUNT = 20
 DYNAMODB_ENDPOINT = 'http://localhost:8000'
 
 def create_or_get_pre_req_table():
