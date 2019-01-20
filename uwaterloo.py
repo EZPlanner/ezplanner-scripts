@@ -11,10 +11,10 @@ class UWaterloo:
             'key': self.api_key
         }
         
-        resp = requests.get(API_BASE_URL + "/courses.json", params = payload)
+        resp = requests.get(API_BASE_URL + "/courses.json", params=payload)
 
-        if (resp.status_code != 200):
-            print("ERROR CODE: {}".format(resp.status_code))
+        if resp.status_code != 200:
+            print("ERROR, response status code: {}".format(resp.status_code))
             return []
 
         courses = []
@@ -27,3 +27,18 @@ class UWaterloo:
             })
 
         return courses
+
+    def get_prereqs(self, course):
+        payload = {
+            'key': self.api_key
+        }
+
+        resp = requests.get(API_BASE_URL + "/courses/{}/{}/prerequisites.json".format(course['subject'], course['catalog_number']), params=payload)
+
+        if resp.status_code != 200:
+            print("ERROR, response status code: {}".format(resp.status_code))
+            return
+
+        resp = resp.json()
+        
+        return 'prerequisites_parsed' in resp['data'] and resp['data']['prerequisites_parsed'] is not None and resp['data']['prerequisites_parsed']
