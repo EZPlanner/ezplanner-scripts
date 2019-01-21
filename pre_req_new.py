@@ -84,7 +84,7 @@ if __name__ == "__main__":
 
     #save all courses in seperate JSON file
     course_dict = getCourses()
-    with open('../output/courses.json', 'w') as fp:
+    with open('./courses.json', 'w') as fp:
         json.dump(course_dict, fp)
 
     course_array = course_dict['data']
@@ -136,7 +136,7 @@ if __name__ == "__main__":
     for x in range(num_threads):
         sem_exit.acquire()
     # create the JSON file
-    with open('../output/prereq.json', 'w') as fp:
+    with open('./prereq.json', 'w') as fp:
         json.dump(preReqDict, fp)
 
 
