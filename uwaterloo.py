@@ -42,18 +42,6 @@ class UWaterloo:
 
         resp = requests.get(API_BASE_URL + "/courses/{}/{}/prerequisites.json".format(course['subject'], course['catalog_number']), params=payload)
 
-        self.current_count += 1
-
-        if self.current_count % 20 == 0:
-            progress = (float(self.current_count) / self.course_count) * 100.0
-
-            os.system('cls' if os.name == 'nt' else 'clear')
-            print('{0:.2f}%'.format(progress))
-            load = ceil(progress)
-            print('|' + '*' * load + ' ' * (100 - load) + '|')
-
-        # print('processing {} {}'.format(course['subject'], course['catalog_number']))
-
         if resp.status_code != 200:
             print("ERROR, response status code: {}".format(resp.status_code))
             return
