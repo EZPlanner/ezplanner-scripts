@@ -9,12 +9,10 @@ class myThread (threading.Thread):
    def run(self):
         print ("Starting " + self.name)
         global process_counter
-        # print(self.courses)
         for i in range(len(self.courses)):
-            course_name = self.courses[i]['subject'] + self.courses[i]['catalog_number']
-            # print("processing {} from {}".format(course_name, self.name))
+            course_name = '{}/{}'.format(self.courses[i]['subject'],self.courses[i]['catalog_number'])
 
-            url_service_courses_prerequisites= "courses/{}/{}/prerequisites.json?".format(self.courses[i]['subject'],self.courses[i]['catalog_number'])
+            url_service_courses_prerequisites= "courses/{}/{}/prerequisites.json?".format(self.courses[i]['subject'], self.courses[i]['catalog_number'])
             url = url_base + url_service_courses_prerequisites + url_apikey
 
             with urllib.request.urlopen(url) as u:
