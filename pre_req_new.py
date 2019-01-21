@@ -43,7 +43,7 @@ class myThread (threading.Thread):
 url_base= "https://api.uwaterloo.ca/v2/"
 url_apikey= "key="+os.environ['UW_API_KEY0']
 
-num_threads = 6
+num_threads = 20
 
 sem = threading.Semaphore()                 # Semaphore for dictionary
 sem_exit = threading.Semaphore()            # Semaphore for parent thread to continue
