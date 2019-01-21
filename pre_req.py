@@ -69,7 +69,7 @@ sem2 = threading.Semaphore()
 total = len(courses)
 progress = 0
 
-def run(courses):
+def run(courses, bar):
     prereq_array = []
     global progress
     for course in courses:
