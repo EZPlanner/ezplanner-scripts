@@ -7,6 +7,7 @@ import os
 
 THREAD_COUNT = 20
 DYNAMODB_ENDPOINT = 'http://localhost:8000'
+BATCH_COUNT = 1000
 
 def create_or_get_pre_req_table():
     try:
@@ -47,11 +48,9 @@ db_res = boto3.resource('dynamodb')
 
 table = create_or_get_pre_req_table()
 
-courses = (uw.get_courses())
+courses = uw.get_courses()
 
 print(len(courses))
-
-args = []
 
 api_key = gen_api_key()
 
@@ -61,7 +60,6 @@ sem = threading.Semaphore()
 sem2 = threading.Semaphore()
 
 total = len(courses)
-
 progress = 0
 
 def run(courses):
@@ -81,7 +79,7 @@ def run(courses):
     prereqs.extend(prereq_array)
     sem.release()
 
-threads = [threading.Thread(target=run, args=(courses[i:i + 3000],)) for i in range(0, len(courses), 3000)]
+threads = [threading.Thread(target=run, args=(courses[i:i + BATCH_COUNT],)) for i in range(0, len(courses), BATCH_COUNT)]
 
 count = 0
 for thread in threads:
