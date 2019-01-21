@@ -66,7 +66,7 @@ def run(courses):
     prereq_array = []
     global progress
     for course in courses:
-        prereq_array.append(uw.get_prereqs({'api_key': next(api_key), 'course': course}))
+        prereq_array.append(uw.get_prereqs({'course': course}))
         sem2.acquire()
         progress += 1
 
