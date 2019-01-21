@@ -4,10 +4,11 @@ import threading
 from uwaterloo import *
 from random import randint
 import os
+import progressbar
 
 THREAD_COUNT = 20
 DYNAMODB_ENDPOINT = 'http://localhost:8000'
-BATCH_COUNT = 1000
+BATCH_COUNT = 200
 
 def create_or_get_pre_req_table():
     try:
@@ -76,16 +77,17 @@ def run(courses):
         sem2.acquire()
         progress += 1
 
-        # if progress % 1 == 0:
-        os.system('cls' if os.name == 'nt' else 'clear')
-        print('Progress: {0:.2f}% - {1}/{2}'.format(float(progress)/total * 100.0, progress, total))
+        bar.update(progress)
+        # os.system('cls' if os.name == 'nt' else 'clear')
+        # print('Progress: {0:.2f}% - {1}/{2}'.format(float(progress)/total * 100.0, progress, total))
         sem2.release()
 
     sem.acquire()
     prereqs.extend(prereq_array)
     sem.release()
 
-threads = [threading.Thread(target=run, args=(courses[i:i + BATCH_COUNT],)) for i in range(0, len(courses), BATCH_COUNT)]
+with progressbar.ProgressBar(max_value=len(courses)) as bar:
+    threads = [threading.Thread(target=run, args=(courses[i:i + BATCH_COUNT], bar)) for i in range(0, len(courses), BATCH_COUNT)]
 
 count = 0
 for thread in threads:
@@ -98,10 +100,14 @@ for thread in threads:
     print('Ending thread #{}'.format(count))
     count -= 1
 
-for prereq in prereqs:
-    table.put_item(
-        Item={
-            'course_key': prereq['course'],
-            'prereqs': prereq['prereqs']
-        }
-    )
+with progressbar.ProgressBar(max_value=len(prereqs)) as foo:
+    count = 0
+    for prereq in prereqs:
+        table.put_item(
+            Item={
+                'course_key': prereq['course'],
+                'prereqs': prereq['prereqs']
+            }
+        )
+        count += 1
+        foo.update(count)
