@@ -43,8 +43,13 @@ def gen_api_key():
 
 uw = UWaterloo(os.environ['UW_API_KEY0'])
 
-db_client = boto3.client('dynamodb')
-db_res = boto3.resource('dynamodb')
+session = boto3.session.Session(
+    aws_access_key_id = os.environ['AWS_ACCESS_KEY'],
+    aws_secret_access_key = os.environ['AWS_SECRET_KEY']
+)
+
+db_client = session.client('dynamodb')
+db_res = session.resource('dynamodb')
 
 table = create_or_get_pre_req_table()
 
