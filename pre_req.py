@@ -81,16 +81,18 @@ def run(courses):
     prereqs.extend(prereq_array)
     sem.release()
 
-threads = [threading.Thread(target=run, args=(courses[i:i + 1000],)) for i in range(0, len(courses), 1000)]
+threads = [threading.Thread(target=run, args=(courses[i:i + 3000],)) for i in range(0, len(courses), 3000)]
 
-count = 1
+count = 0
 for thread in threads:
-    print('Starting thread #{}'.format(count))
     count += 1
+    print('Starting thread #{}'.format(count))
     thread.start()
 
 for thread in threads:
     thread.join()
+    print('Ending thread #{}'.format(count))
+    count -= 1
 
 for prereq in prereqs:
     table.put_item(
