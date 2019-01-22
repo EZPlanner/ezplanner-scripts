@@ -1,4 +1,9 @@
-from uwaterloo import *
-import os
+from dynamodb import *
 
-print(len(UWaterloo(os.environ['UW_API_KEY{}']).get_courses()))
+db = DynamoDB(endpoint_url='http://localhost:8000') # Get local dynamodb instance
+
+prereq_table = db.get_pre_req_table()
+
+prereqs = db.get_all_entries(prereq_table)
+
+print(prereqs)
