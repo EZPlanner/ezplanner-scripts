@@ -1,1 +1,1 @@
-# Chron job that runs to populate AWS dynamodb with postreq data
+# Cron job that runs to populate AWS dynamodb with postreq data
