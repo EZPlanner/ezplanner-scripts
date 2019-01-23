@@ -26,7 +26,7 @@ class DynamoDB:
 
     def get_pre_req_table(self):
         try:
-            return self.client.create_table(
+            self.client.create_table(
                 TableName='pre_req',
                 KeySchema=[
                     {
@@ -45,14 +45,32 @@ class DynamoDB:
                     'WriteCapacityUnits': 10
                 }
             )
+            return self.resource.Table('pre_req')
         except self.client.exceptions.ResourceInUseException:
             return self.resource.Table('pre_req')
 
     def get_post_req_table(self):
         try:
-            return self.client.create_table(
-
+            self.client.create_table(
+                TableName='post_req',
+                KeySchema=[
+                    {
+                        'AttributeName': 'course_key',
+                        'KeyType': 'HASH'
+                    }
+                ],
+                AttributeDefinitions=[
+                    {
+                        'AttributeName': 'course_key',
+                        'AttributeType': 'S'
+                    }
+                ],
+                ProvisionedThroughput={
+                    'ReadCapacityUnits': 10,
+                    'WriteCapacityUnits': 10
+                }
             )
+            return self.resource.Table('post_req')
         except self.client.exceptions.ResourceInUseException:
             return self.resource.Table('post_req')
 
